@@ -23,3 +23,4 @@
 
 6. 라이브러리 설치
    npm install -S express
+   npm install -S socket.io

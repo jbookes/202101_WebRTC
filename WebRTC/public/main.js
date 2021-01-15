@@ -24,3 +24,23 @@ const streamConstraints = {
   audio: true,
   video: true,
 };
+
+// 화상채팅 접속 버튼 (실제 이름을 입력하고 이동을 클릭하면 애플리케이션에 액세스 가능)
+btnGoRoom.onclick = () => {
+  // 유효한 방이 있는지 유효성 검사
+  if (inputRoomNumber.value === "") {
+    alert("화상채팅 코드를 확인해주세요");
+  } else {
+    navigator.mediaDevices
+      .getUserMedia(streamConstraints)
+      .then((stream) => {
+        localStream = stream;
+        localVideo.srcObject = stream;
+      })
+      .catch((err) => {
+        console.log(`에러 : ${err}`);
+      });
+    divSelectRoom.style = "display : none";
+    divConsultingRoom.style = "display : black";
+  }
+};

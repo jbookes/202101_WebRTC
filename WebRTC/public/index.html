@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<head>
+  <title>WebRTC Study</title>
+</head>
+<body>
+  <h1>WebRTC Study</h1>
+  <div id="selectRoom">
+    <label>화상미팅 코드</label>
+    <input id="roomNumber" type="text" />
+    <button id="goRoom">접속</button>
+  </div>
+  <div id="consultingRoom" style="display: none">
+    <video id="localVideo" autoplay></video>
+    <video id="remoteVideo" autoplay></video>
+  </div>
+
+  <script src="main.js"></script>
+</body>

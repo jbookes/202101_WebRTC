@@ -1,18 +1,18 @@
 const express = require("express");
 const app = express();
-const http = require("http");
-const server = http.createServer(app);
-const path = require("path");
+// const http = require("http");
+// const server = http.createServer(app);
+// const path = require("path");
+const http = require("http").Server(app);
 let io = require("socket.io")(http);
-// const http = require("http").Server(app);
 
 const port = process.env.PORT || 3000;
 
-const publicDirectory = path.join(__dirname, "./public");
-app.use(express.static(publicDirectory));
-// app.use(express.static("public"));
+// const publicDirectory = path.join(__dirname, "./public");
+// app.use(express.static(publicDirectory));
+app.use(express.static("public"));
 
-server.listen(port, () => {
+http.listen(port, () => {
   console.log(`http://localhost:${port}`);
 });
 
@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
   socket.on("create or join", (room) => {
     // 화상채팅방이 있다면 들어가고 없다면 생성
     console.log("create or join to room", room);
-    const myRoom = io.socket.adapter.rooms[room] || { length: 0 };
+    const myRoom = io.sockets.adapter.rooms[room] || { length: 0 };
     const numClients = myRoom.length;
     console.log(room, " has ", numClients, " clients ");
 
@@ -36,18 +36,18 @@ io.on("connection", (socket) => {
       // 2명 이상이 들어온다면 못오도록 막음
       socket.emit("full", room);
     }
+  });
 
-    socket.on("ready", (room) => {
-      socket.broadcast.to(room).emit("ready");
-    });
-    socket.on("candidate", (event) => {
-      socket.broadcast.to(event.room).emit("candidate", event);
-    });
-    socket.on("offer", (event) => {
-      socket.broadcast.to(event.room).emit("offer", sdp);
-    });
-    socket.on("answer", (event) => {
-      socket.broadcast.to(event.room).emit("answer", sdp);
-    });
+  socket.on("ready", (room) => {
+    socket.broadcast.to(room).emit("ready");
+  });
+  socket.on("candidate", (event) => {
+    socket.broadcast.to(event.room).emit("candidate", event);
+  });
+  socket.on("offer", (event) => {
+    socket.broadcast.to(event.room).emit("offer", event.sdp);
+  });
+  socket.on("answer", (event) => {
+    socket.broadcast.to(event.room).emit("answer", event.sdp);
   });
 });

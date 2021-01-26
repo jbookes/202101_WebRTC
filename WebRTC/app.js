@@ -1,15 +1,24 @@
 const express = require("express");
-
+const path = require("path");
+const fs = require("fs");
 const app = express();
 const http = require("http").Server(app);
-const io = require("socket.io")(http);
+const httpolyglot = require("httpolyglot");
 
-const port = process.env.PORT || 3000;
+const options = {
+  key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem"), "utf-8"),
+  cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem"), "utf-8"),
+};
+
+const httpsServer = httpolyglot.createServer(options, app);
+const io = require("socket.io")(httpsServer);
+
+const port = process.env.PORT || 19082;
 
 app.use(express.static("public"));
 
-http.listen(port, () => {
-  console.log(`http://localhost:${port}`);
+httpsServer.listen(port, () => {
+  console.log(`https://localhost:${port}`);
 });
 
 io.on("connection", (socket) => {
